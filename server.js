@@ -12,13 +12,17 @@ var server = require('http').createServer(app); //creates an HTTP server instanc
 var api = require('./routes/api'); //gets api logic from path
 
 //-------------------------MongoDB Setup-----------------------------//
-/*var mongoose = require('mongoose');                         
-var mongoURI = "mongodb://127.0.0.1:27017/DataBaseNameHere";
+var mongoose = require('mongoose');                         
+var mongoURI = "mongodb://127.0.0.1:27017/CUDA_Image_Processing";
 var MongoDB = mongoose.connect(mongoURI).connection;
 MongoDB.on('error', function(err) { console.log(err.message); });
 MongoDB.once('open', function() {
   console.log("mongodb connection open");
-});*/
+});
+
+//-------------------------Globals-----------------------------//
+var localIP = require("ip").address(); //used to know where to check for web view site
+console.log("Local IP: " + localIP);
 
 var debugMode = false;
 //-------------------------Node Setup-----------------------------//

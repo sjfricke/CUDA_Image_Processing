@@ -6,9 +6,13 @@
 
     var ImageSchema = new Schema({
         fileName: String,
-        thumbnail: String,
-        full: String,
-        image_id: Number
+        displayName: String,
+        thumbnailPath: String,
+        originialPath: String,
+        colorInfoPath: String,
+        filetype: String,
+        width: Number,
+        height: Number
     }, 
     { collection : 'images' }
     );

@@ -1,56 +1,66 @@
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/opencv.hpp>
 #include "utils.h"
-#include <cuda.h>
-#include <cuda_runtime.h>
-#include <string>
 
-uchar3        *d_rgbaImage__;
-unsigned char *d_greyImage__;
-
-size_t numRows() { return image.rows; }
-size_t numCols() { return image.cols; }
-
-//return types are void since any internal error will be handled by quitting
-//no point in returning error codes...
-//returns a pointer to an RGBA version of the input image
-//and a pointer to the single channel grey-scale output
-//on both the host and device
-void preProcess(uchar3 **inputImage, unsigned char **greyImage,
-		uchar3 **d_rgbImage, unsigned char **d_greyImage,
-		const std::string &filename) {
-
-  //make sure the context initializes ok
-  checkCudaErrors(cudaFree(0));
-
-
-  *inputImage = (uchar4 *)imageRGBA.ptr<unsigned char>(0);
-  *greyImage  = imageGrey.ptr<unsigned char>(0);
-
-  const size_t numPixels = numRows() * numCols();
-  //allocate memory on the device for both input and output
-  checkCudaErrors(cudaMalloc(d_rgbaImage, sizeof(uchar4) * numPixels));
-  checkCudaErrors(cudaMalloc(d_greyImage, sizeof(unsigned char) * numPixels));
-  checkCudaErrors(cudaMemset(*d_greyImage, 0, numPixels * sizeof(unsigned char))); //make sure no memory is left laying around
-
-  //copy input array to the GPU
-  checkCudaErrors(cudaMemcpy(*d_rgbaImage, *inputImage, sizeof(uchar4) * numPixels, cudaMemcpyHostToDevice));
-
-  d_rgbaImage__ = *d_rgbaImage;
-  d_greyImage__ = *d_greyImage;
-}
-
-void postProcess(const std::string& output_file, unsigned char* data_ptr) {
-  cv::Mat output(numRows(), numCols(), CV_8UC1, (void*)data_ptr);
-
-  //output the image
-  cv::imwrite(output_file.c_str(), output);
-}
-
-void cleanup()
+using namespace cv;
+using namespace std;
+int average_value(int start, int end)
 {
-  //cleanup
-  cudaFree(d_rgbaImage__);
-  cudaFree(d_greyImage__);
+if (end < start) {
+	return -1;
+}
+//input args for the image_data vector 
+
+
+//vector<Pixel> image_data;
+//Pixel current_pixel;
+//current_pixel.red
+
+//find average of a pixel range
+int sum_red = 0;
+int sum_blue = 0;
+int sum_green = 0;
+
+for(vector<Pixel>::iterator it = IMAGE_DATA.at(start); it != IMAGE_DATA.at(end); ++it) {
+	sum_red += (int) *it.red;
+	sum_blue += (int) *it.blue;
+	sum_green += (int) *it.green;
+}
+
+int avg_red = sum_red / v.size();
+int avg_blue = sum_blue / v.size();
+int avg_green = sum_green / v.size();
+
+//really not sure about this code.....
+/*inline unsigned long average(unsigned long a, unsigned long b) {	
+	return (((a^b) & 0xfffefefeUL) >> 1) + (a & b);
+} */
+
+//NewColor = sqrt((R1^2+R2^2)/2),sqrt((G1^2+G2^2)/2),sqrt((B1^2+B2^2)/2);
+
+//find total average color first
+int xVertex;
+int yVertex;
+int roiWidth;
+int roiHeight;
+
+
+cout << "xVertex: " << endl;
+cin >> xVertex;
+
+cout << "yVertex: " << endl;
+cin >> yVertex;
+
+cout << "roiWidth: " << endl;
+cin >> roiWidth;
+
+cout << "roiHeight: " << endl;
+cin >> roiHeight;
+
+Rect roi(xVertex, yVertex, roiWidth, roiHeight);
+Mat image_roi = inputImage(roi);
+
+Scalar avgPixelIntensity = mean(image_roi);
+
+cout << "Pixel Intensity over your ROI = " << avg PixelIntensity.val[0] << endl;
+
+ return 0; 
 }

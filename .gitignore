@@ -39,3 +39,6 @@ jspm_packages
 #Clion 
 .idea/
 CMakeLists.txt
+
+#C/C++ development
+image_processing/*.o

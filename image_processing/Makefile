@@ -39,7 +39,7 @@ all: main.o combine_files.o Makefile
 	$(NVCC) -o processing main.o combine_files.o -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) $(NVCC_OPTS)
 
 main.o: main.cpp utils.h
-	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH) -I $(OPENCV_INCLUDEPATH)
+	g++ -c processing.cpp main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH) -I $(OPENCV_INCLUDEPATH)
 
 combine_files.o: combine_files.cu utils.h
 	nvcc -c combine_files.cu $(NVCC_OPTS)

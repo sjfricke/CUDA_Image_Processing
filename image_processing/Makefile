@@ -46,3 +46,6 @@ combine_files.o: combine_files.cu utils.h
 
 clean:
 	rm -f *.o *.png hw
+
+upload:
+	g++ upload.cpp -o upload $(GCC_OPTS) -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) -I $(OPENCV_INCLUDEPATH)

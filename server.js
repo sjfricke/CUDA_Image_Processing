@@ -9,16 +9,18 @@ var cookieParser = require('cookie-parser'); //Parse Cookie header and populate 
 var bodyParser = require('body-parser'); //allows the use of req.body in POST request
 var server = require('http').createServer(app); //creates an HTTP server instance
 
+const UPLOAD_FOLDER = "front/server_images/"
 var multer  = require('multer'); //used for getting uploaded files
-var upload = multer({ dest: 'uploads/' });
+var upload = multer({ dest: UPLOAD_FOLDER });
 var fs = require('fs');
 
 var api = require('./routes/api'); //gets api logic from path
 
 //-------------------------MongoDB Setup-----------------------------//
-var mongoose = require('mongoose');            
+var mongoose = require('mongoose');
 var image_model = require('./routes/images/images.model'); //used to upload data with image
 var mongoURI = "mongodb://127.0.0.1:27017/CUDA_Image_Processing";
+mongoose.Promise = global.Promise; //Mongoose deprecated default promises (mpromise)
 var MongoDB = mongoose.connect(mongoURI).connection;
 MongoDB.on('error', function(err) { console.log(err.message); });
 MongoDB.once('open', function() {
@@ -58,36 +60,67 @@ app.get('/', function(req, res, next) {
   res.sendFile('index.html');
 });
 
-/*
-fileName: String,
-displayName: String,
-thumbnailPath: String,
-originialPath: String,
-colorInfoPath: String,
-filetype: String,
-width: Number,
-height: Number
-*/
+
+const execFile = require('child_process').execFile;
 
 app.post('/fileUpload', upload.single('file'), function(req, res) {
-    
-    //new name
-    var filePath = __dirname + '/uploads/' + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
-    
-    console.log("filePaht " + filePath);
+
+    // file paths
+    var filePath = __dirname + '/' + UPLOAD_FOLDER + "originial/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
+    var thumbnailPath = __dirname + '/' + UPLOAD_FOLDER + "thumbnail/" + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
+    var dataPath = __dirname + '/data/colorFile/' + req.file.filename + '.rgb'; 
+    //  need an absolute for openCV, but relative for mongoDB so front end can serve it from server_images folder
+    var filePath_local = "server_images/originial/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
+    var thumbnailPath_local = "server_images/thumbnail/" + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
+    //var dataPath_local = 'data/colorFile/' + req.file.filename + '.rgb'; 
     
     //prevents duplicate files
     if (fs.existsSync(filePath)) {
-        filePath += Date.now();
+        return res.send("Duplicate file name");
     }
-    
+
+    // renames file
     fs.rename(req.file.path, filePath, function(err) {
         if (err) {
             console.error(err);
             res.send(500);
         } else {
-        
-            res.send("TODO");            
+            const child = execFile('./image_processing/upload', [filePath, thumbnailPath, dataPath], (error, stdout, stderr) => {
+		if (error) {
+		    return res.send("FAILED UPLOAD RESIZE"); // exit function
+		    throw error;
+		}
+		res.send("TODO"); // dont return function
+		console.log(stdout);
+	    });
+
+	    child.on("close", (code, signal) => {
+		console.log("closed");
+		console.log(code);
+		console.log(signal);
+
+		// creates data for database
+		var image_document = new image_model({
+		    "fileName": req.file.filename,
+		    "thumbnailPath": thumbnailPath_local,
+		    "originialPath": filePath_local,
+		    "dataPath": dataPath,
+		    "mimetype": req.file.mimetype
+		});
+
+		// saves it to database
+		image_document.save(function(err, post) {
+		    if (err) {
+			console.error(err);
+		    }
+		    console.log("image saved!");
+		});
+	    })
+
+	    child.on("error", (err) => {
+		console.log("err");
+		console.error(err);
+	    })
         }
     });
 });
@@ -97,7 +130,7 @@ app.post('/fileUpload', upload.single('file'), function(req, res) {
 /*app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  next(err); 
+  next(err);
 });*/
 
 // error handlers

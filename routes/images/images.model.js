@@ -9,14 +9,14 @@
         displayName: String,
         thumbnailPath: String,
         originialPath: String,
-        colorInfoPath: String,
-        filetype: String,
+        dataPath: String,
+        mimetype: String,
         width: Number,
         height: Number
-    }, 
+    },
     { collection : 'images' }
     );
-    
+
 module.exports = mongoose.model('Image', ImageSchema);
 
 })();

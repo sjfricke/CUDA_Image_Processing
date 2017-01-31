@@ -5,20 +5,22 @@
 
 
 //Basic CRUD
-    
+
     //grab all for display
-    module.exports.getAll = function(req, res) { 
-        Image.find({}, function (err, post) {
+    //ment for webpage so withholds some fields
+    module.exports.getAll = function(req, res) {
+	var query = Image.find({}).select({'dataPath':0, '_id':0});
+        query.exec(function (err, post) {
             if (err) {
                 console.error(err);
                 return res.status(500).send(err);
             }
             res.json(post);
-            
+
         });
     };
 
-    
+
     //create a new post
     module.exports.create = function(req, res) {
         var image = new Image(req.body);
@@ -30,7 +32,7 @@
           res.json(post);
         });
      };
-  
+
      //edit exsisting one
      module.exports.update = function(req, res) {
         var imageID = req.params.imageID;
@@ -41,10 +43,8 @@
           if (err) {
                 console.error(err);
                 return res.status(500).send(err);
-          }  
+          }
           res.json(post);
         });
      };
-    
-    
 })();

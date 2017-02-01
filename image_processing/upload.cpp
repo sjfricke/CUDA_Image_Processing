@@ -15,14 +15,14 @@ int main(int argc, char** argv) {
   FILE* data_file;
   unsigned char* data_stream;
   int* header_info;
-  const unsigned char ZERO = 0;
+  //  const unsigned char ZERO = 0;
   int buffer_size;
-  
+
   // declare images
   cv::Mat src_image;
   cv::Mat dest_image;
   cv::Vec3b image_buffer;
-  
+
   // read in image
   src_image = cv::imread( argv[1], CV_LOAD_IMAGE_COLOR );
   if ( !src_image.data ) {
@@ -45,14 +45,15 @@ int main(int argc, char** argv) {
 
   *(header_info + 0) = src_image.rows;
   *(header_info + 1) = src_image.cols;
-  
+
   data_file = fopen(argv[3], "wb");
   fwrite(header_info, sizeof(int), 2, data_file);
 
   // 3 bytes for each pixel of image
-  // extra byte due to 4 byte aligning of bytes
-  buffer_size = sizeof(unsigned char) * src_image.cols * src_image.rows * 4;
-  
+  //!! UNDID, TODO if needed:
+  //   extra byte due to 4 byte aligning of bytes
+  buffer_size = sizeof(unsigned char) * src_image.cols * src_image.rows * 3;
+
   data_stream = (unsigned char*) malloc(buffer_size);
   if (data_stream == NULL) {
      fprintf(stderr, "%s\n", "failed to malloc stream");
@@ -66,18 +67,18 @@ int main(int argc, char** argv) {
   for(int i = 0; i < src_image.rows; i++) {
       for(int j = 0; j < src_image.cols; j++) {
         image_buffer = src_image.at<cv::Vec3b>(i,j);
-	*(data_stream + ((((src_image.cols * i) + j) * 4) + 0)) = image_buffer[2];
-	*(data_stream + ((((src_image.cols * i) + j) * 4) + 1)) = image_buffer[1];
-	*(data_stream + ((((src_image.cols * i) + j) * 4) + 2)) = image_buffer[0];
-	*(data_stream + ((((src_image.cols * i) + j) * 4) + 3)) = ZERO; 
+	*(data_stream + ((((src_image.cols * i) + j) * 3) + 0)) = image_buffer[0];
+	*(data_stream + ((((src_image.cols * i) + j) * 3) + 1)) = image_buffer[1];
+	*(data_stream + ((((src_image.cols * i) + j) * 3) + 2)) = image_buffer[2];
+//	*(data_stream + ((((src_image.cols * i) + j) * 4) + 3)) = ZERO;
     }
   }
 
   fwrite(data_stream, sizeof(unsigned char), buffer_size, data_file);
-  
+
   fclose(data_file);
 
   free(data_stream);
-  
+
   exit(0);
 }

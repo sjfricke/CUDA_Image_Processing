@@ -68,12 +68,12 @@ app.post('/fileUpload', upload.single('file'), function(req, res) {
     // file paths
     var filePath = __dirname + '/' + UPLOAD_FOLDER + "originial/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
     var thumbnailPath = __dirname + '/' + UPLOAD_FOLDER + "thumbnail/" + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
-    var dataPath = __dirname + '/data/colorFile/' + req.file.filename + '.rgb'; 
+    var dataPath = __dirname + '/data/colorFile/' + req.file.filename + '.rgb';
     //  need an absolute for openCV, but relative for mongoDB so front end can serve it from server_images folder
     var filePath_local = "server_images/originial/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
     var thumbnailPath_local = "server_images/thumbnail/" + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
-    //var dataPath_local = 'data/colorFile/' + req.file.filename + '.rgb'; 
-    
+    //var dataPath_local = 'data/colorFile/' + req.file.filename + '.rgb';
+
     //prevents duplicate files
     if (fs.existsSync(filePath)) {
         return res.send("Duplicate file name");

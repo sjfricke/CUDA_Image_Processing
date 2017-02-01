@@ -22,8 +22,4 @@ typedef struct _Pixel {
 
 Pixel* add_values(Pixel* image_data, int width, int height, int image_count);
 
-extern std::vector<Pixel> IMAGE_DATA;
-
-extern std::vector<cv::Mat> IMAGE_FILES;
-
 #endif

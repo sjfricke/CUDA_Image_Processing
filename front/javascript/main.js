@@ -25,7 +25,7 @@ function init() {
 }
 
 function test(file) {
-    window.open('server_images/full_images/' + file);
+    window.open('server_images/full/' + file);
 }
 
 $(document).ready(function() {

@@ -66,10 +66,10 @@ const execFile = require('child_process').execFile;
 app.post('/fileUpload', upload.single('file'), function(req, res) {
 
     // file paths
-    var filePath = __dirname + '/' + UPLOAD_FOLDER + "originial/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
+    var filePath = __dirname + '/' + UPLOAD_FOLDER + "full/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
     var thumbnailPath = __dirname + '/' + UPLOAD_FOLDER + "thumbnail/" + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
     //  need an absolute for openCV, but relative for mongoDB so front end can serve it from server_images folder
-    var filePath_local = "server_images/originial/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
+    var filePath_local = "server_images/full/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
     var thumbnailPath_local = "server_images/thumbnail/" + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
 
     //prevents duplicate files

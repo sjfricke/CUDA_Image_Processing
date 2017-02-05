@@ -1,28 +1,28 @@
-function init() {    
+function init() {
     $.get("/api/images/getAll", function(data) {
-        
+
         console.log(data);
-       
+
         var displayDOM = document.getElementById('display');
-        
-        data.forEach(function(element, index){           
-                        
+
+        data.forEach(function(element, index){
+
             let image_element = document.createElement("IMG");
             image_element.src = element.thumbnailPath;
-                        
+
             let a_element = document.createElement('a');
             a_element.appendChild(image_element);
             a_element.setAttribute("class", "fancybox");
             a_element.rel = "group";
             a_element.href = element.originialPath;
-            
+
             a_element.appendChild(image_element);
-            displayDOM.appendChild(a_element);     
-            
+            displayDOM.appendChild(a_element);
+
         });
-        
-    })
-}
+
+    }) // $.get end
+} // init end
 
 function test(file) {
     window.open('server_images/full/' + file);

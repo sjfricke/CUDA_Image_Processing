@@ -116,7 +116,7 @@ app.post('/fileUpload', upload.single('file'), function(req, res) {
 		console.error("ERROR: " + err);
 	    })
         }
-    }); // rename end 
+    }); // rename end
 }); // post.fileUpload end
 
 

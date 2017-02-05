@@ -30,6 +30,6 @@ int main(int argc, char** argv) {
   // overwrites src_image
   cv::resize(src_image, dest_image_full, cv::Size(1024, 576), 0, 0, CV_INTER_CUBIC);
   cv::imwrite( argv[1], dest_image_full );
-    
+
   exit(0);
 }

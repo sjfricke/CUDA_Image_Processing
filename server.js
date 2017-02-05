@@ -68,11 +68,9 @@ app.post('/fileUpload', upload.single('file'), function(req, res) {
     // file paths
     var filePath = __dirname + '/' + UPLOAD_FOLDER + "originial/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
     var thumbnailPath = __dirname + '/' + UPLOAD_FOLDER + "thumbnail/" + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
-    var dataPath = __dirname + '/data/colorFile/' + req.file.filename + '.rgb';
     //  need an absolute for openCV, but relative for mongoDB so front end can serve it from server_images folder
     var filePath_local = "server_images/originial/"  + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
     var thumbnailPath_local = "server_images/thumbnail/" + req.file.filename + req.file.originalname.substr(req.file.originalname.lastIndexOf('.'));
-    //var dataPath_local = 'data/colorFile/' + req.file.filename + '.rgb';
 
     //prevents duplicate files
     if (fs.existsSync(filePath)) {
@@ -85,7 +83,7 @@ app.post('/fileUpload', upload.single('file'), function(req, res) {
             console.error(err);
             res.send(500);
         } else {
-            const child = execFile('./image_processing/upload', [filePath, thumbnailPath, dataPath], (error, stdout, stderr) => {
+            const child = execFile('./image_processing/upload', [filePath, thumbnailPath], (error, stdout, stderr) => {
 		if (error) {
 		    return res.send("FAILED UPLOAD RESIZE"); // exit function
 		    throw error;
@@ -95,16 +93,13 @@ app.post('/fileUpload', upload.single('file'), function(req, res) {
 	    });
 
 	    child.on("close", (code, signal) => {
-		console.log("closed");
-		console.log(code);
-		console.log(signal);
+		console.log("closed ./upload with code: " + code + " and signal: " + signal);
 
 		// creates data for database
 		var image_document = new image_model({
 		    "fileName": req.file.filename,
 		    "thumbnailPath": thumbnailPath_local,
 		    "originialPath": filePath_local,
-		    "dataPath": dataPath,
 		    "mimetype": req.file.mimetype
 		});
 
@@ -118,12 +113,11 @@ app.post('/fileUpload', upload.single('file'), function(req, res) {
 	    })
 
 	    child.on("error", (err) => {
-		console.log("err");
-		console.error(err);
+		console.error("ERROR: " + err);
 	    })
         }
-    });
-});
+    }); // rename end 
+}); // post.fileUpload end
 
 
 // catch 404 and forward to error handler

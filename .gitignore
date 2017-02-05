@@ -42,9 +42,13 @@ CMakeLists.txt
 
 #C/C++ development
 image_processing/*.o
+image_processing/upload
+image_processing/processing
 
 #uploaded images
-uploads
+front/server_images/full_images
+front/server_images/thumbnail_images
 
 #testing files and scripts
 Testing
+

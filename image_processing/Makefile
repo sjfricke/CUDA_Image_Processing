@@ -35,14 +35,14 @@ NVCC_OPTS=-O3 -arch=sm_20 -Xcompiler -Wall -Xcompiler -Wextra -m64
 
 GCC_OPTS=-O3 -Wall -Wextra -m64
 
-all: main.o combine_files.o Makefile
-	$(NVCC) -o processing main.o combine_files.o -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) $(NVCC_OPTS)
+all: main.o cuda_processing.o Makefile
+	$(NVCC) -o processing main.o cuda_processing.o -L $(OPENCV_LIBPATH) $(OPENCV_LIBS) $(NVCC_OPTS)
 
 main.o: main.cpp utils.h
 	g++ -c main.cpp $(GCC_OPTS) -I $(CUDA_INCLUDEPATH) -I $(OPENCV_INCLUDEPATH)
 
-combine_files.o: combine_files.cu utils.h
-	nvcc -c combine_files.cu $(NVCC_OPTS)
+cuda_processing.o: cuda_processing.cu utils.h
+	nvcc -c cuda_processing.cu $(NVCC_OPTS)
 
 clean:
 	rm -f *.o *.png hw

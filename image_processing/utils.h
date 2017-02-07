@@ -13,13 +13,14 @@
 #include <cuda_runtime_api.h>
 #include <vector>
 #include <cstdlib>
+#include <stdint.h>
 
 typedef struct _Pixel {
-  unsigned char red;
-  unsigned char green;
-  unsigned char blue;
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
 } Pixel;
 
-Pixel* add_values(Pixel* image_data, int width, int height, int image_count);
+Pixel* average_linear_cuda(Pixel* image_data, int width, int height, int image_count);
 
 #endif

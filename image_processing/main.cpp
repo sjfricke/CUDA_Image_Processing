@@ -30,11 +30,13 @@ int main(int argc, char **argv) {
   Pixel pixel_buffer;
   cv::Vec3b image_buffer;
   cv::Mat mat_buffer;
-  unsigned int buffer_count = 0; //TODO long?
+  uint64_t buffer_count = 0;
 
+  // main data of images
   Pixel* IMAGE_DATA; //3D array of images
   int image_count = argc - 1; // Can change if added more arguments to program
   int image_width, image_height; 
+  Pixel* result_data;
   
   string output_file;
 
@@ -110,7 +112,7 @@ int main(int argc, char **argv) {
   output_file = "test_output.jpg";
 
   //sends back pointer with added data from CUDA
-  //added_values = add_values(IMAGE_DATA, IMAGE_WIDTH, IMAGE_HEIGHT, image_count);
+  result_data = average_linear_cuda(IMAGE_DATA, image_height, image_width, image_count);
   
   return 0;
 }

@@ -8,6 +8,20 @@
 #else
 #define debug( x, y ) 
 #endif
+
+using namespace std;
+
+int saveFile(Pixel* image_data, int height, int width, string output_file) {
+
+  cv::Mat image_buffer = cv::Mat(height, width, CV_8UC3, (uint8_t*)image_data ).clone(); // make a copy
+  debug("image_buffer", " created");
+
+  cv::imwrite( output_file, image_buffer );
+
+  debug("image write", "");
+  return 0;
+}
+
 /* 
  * Pass array image paths in argv[1] - argv[n]
  * Opens first one to get size of file
@@ -15,9 +29,6 @@
  * Iterates through images sources, loads image and set in data
  * Rest is sent to other operations outside main
  */
-
-using namespace std;
-
 int main(int argc, char **argv) {
 
   if (argc < 3) {
@@ -26,6 +37,7 @@ int main(int argc, char **argv) {
   }
   
   int i,j,k; // loops
+  int err_check;
   //buffers to hold temp data
   Pixel pixel_buffer;
   cv::Vec3b image_buffer;
@@ -113,6 +125,10 @@ int main(int argc, char **argv) {
 
   //sends back pointer with added data from CUDA
   result_data = average_linear_cuda(IMAGE_DATA, image_height, image_width, image_count);
+
+  err_check = saveFile(result_data, image_height, image_width, output_file);
+
+  if (err_check != 0) {  cout << "ERROR: writing to file" << endl; }
   
   return 0;
 }

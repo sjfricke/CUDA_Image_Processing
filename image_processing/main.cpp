@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
     exit(1);
   }
   
-  int i,j; // loops
+  int i,j,k; // loops
   //buffers to hold temp data
   Pixel pixel_buffer;
   cv::Vec3b image_buffer;
@@ -77,15 +77,17 @@ int main(int argc, char **argv) {
 
   debug((sizeof(Pixel) * image_width * image_height * image_count));
   
-  // iterates through vector
-  for (vector<cv::Mat>::iterator iterator = IMAGE_FILES.begin() ; iterator != IMAGE_FILES.end(); ++iterator) {
 
-    // takes data from files to pixels
-    // double for loop inside iterator... its 3am, I do what I want 
-    for( i = 0; i < iterator->rows; i++) {
-      for( j = 0; j < iterator->cols; j++) {
-	image_buffer = (*iterator).at<cv::Vec3b>(i,j);
-	pixel_buffer.red = image_buffer[2];
+  // takes data from files to pixels
+  // double for loop inside iterator... its 3am, I do what I want 
+  
+  for ( i = 0; i < image_count; i++) {
+   
+    for( j = 0; j < IMAGE_FILES[i].rows; j++) {
+      for( k = 0; k < IMAGE_FILES[i].cols; k++) {
+        image_buffer = IMAGE_FILES[i].at<cv::Vec3b>(j,k);
+
+  	pixel_buffer.red = image_buffer[2];
 	pixel_buffer.green = image_buffer[1];
 	pixel_buffer.blue = image_buffer[0];
 	
@@ -95,7 +97,6 @@ int main(int argc, char **argv) {
 	buffer_count++;
       }
     }
-  
   } // iterator end
   
  

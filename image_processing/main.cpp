@@ -4,9 +4,9 @@
 //Debug
 #define USEDEBUG
 #ifdef USEDEBUG
-#define debug( x ) std::cout << x << std::endl;
+#define debug( x, y ) std::cout << x << y << std::endl;
 #else
-#define debug( x ) 
+#define debug( x, y ) 
 #endif
 /* 
  * Pass array image paths in argv[1] - argv[n]
@@ -30,12 +30,11 @@ int main(int argc, char **argv) {
   Pixel pixel_buffer;
   cv::Vec3b image_buffer;
   cv::Mat mat_buffer;
-  int buffer_count = 0;
-  
+  unsigned int buffer_count = 0; //TODO long?
+
+  Pixel* IMAGE_DATA; //3D array of images
   int image_count = argc - 1; // Can change if added more arguments to program
   int image_width, image_height; 
-  
-  //Pixel* added_values;
   
   string output_file;
 
@@ -68,30 +67,36 @@ int main(int argc, char **argv) {
 
   // allocated enough data by number of photos
   // reference: 3 * 1024 * 576 == ~1.8MB
-  Pixel* IMAGE_DATA = (Pixel*) malloc(sizeof(Pixel) * image_width * image_height * image_count);
+  int image_byte_size = (sizeof(Pixel) * image_width * image_height);
+  
+  IMAGE_DATA = (Pixel*) malloc(image_byte_size * image_count);
   
   if (IMAGE_DATA == NULL) {
       cout << "ERROR: IMAGE_DATA Malloc Failed" << endl;
       exit(1);
   }
 
-  debug((sizeof(Pixel) * image_width * image_height * image_count));
+  debug("byte size: ", (sizeof(Pixel) * image_width * image_height * image_count));
   
-
   // takes data from files to pixels
-  // double for loop inside iterator... its 3am, I do what I want 
-  
+  // triple for loop... its works, I do what I want 
   for ( i = 0; i < image_count; i++) {
    
     for( j = 0; j < IMAGE_FILES[i].rows; j++) {
       for( k = 0; k < IMAGE_FILES[i].cols; k++) {
+
+	// i == image_index, j == row, k == column
+	
         image_buffer = IMAGE_FILES[i].at<cv::Vec3b>(j,k);
 
+	// stores as BGR
+	// TODO, make sure Red and Blue are not swapped
   	pixel_buffer.red = image_buffer[2];
 	pixel_buffer.green = image_buffer[1];
 	pixel_buffer.blue = image_buffer[0];
 	
-	//sets Pixel at spot in memory
+	// sets Pixel at spot in memory
+	// TODO - see if index math better then buffer count
 	*(IMAGE_DATA + buffer_count) = pixel_buffer;
 	
 	buffer_count++;
@@ -99,7 +104,7 @@ int main(int argc, char **argv) {
     }
   } // iterator end
   
- 
+  debug("malloc pixels: ", buffer_count);
 
   
   output_file = "test_output.jpg";

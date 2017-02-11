@@ -65,6 +65,46 @@ int bufferByImage(vector<cv::Mat>& IMAGE_FILES, Pixel* IMAGE_DATA, int image_cou
   return 0;
 }
 
+
+/*
+ * used to store set of images by coord in buffer
+ * image_1 = A; image_2 = B; both 16x8 deminsions
+ * [ A_x1_y1, B_x1_y1, A_x2_y1, ... , A_x16_y16, B_x16_y16 ]
+ */
+int bufferByCoord(vector<cv::Mat>& IMAGE_FILES, Pixel* IMAGE_DATA, int image_count, int height, int width) {
+  
+  int i,j,k; // loops
+  Pixel pixel_buffer; // Pixel is a 3-byte struct for 8-bit RGB value
+  cv::Vec3b image_buffer;
+  
+  // triple for loop... its works, I do what I want 
+  for ( i = 0; i < image_count; i++) {
+   
+    for( j = 0; j < IMAGE_FILES[i].rows; j++) {
+      for( k = 0; k < IMAGE_FILES[i].cols; k++) {
+
+	// i == image_index, j == row, k == column
+	
+        image_buffer = IMAGE_FILES[i].at<cv::Vec3b>(j,k);
+
+	// stores as BGR
+	// TODO, make sure Red and Blue are not swapped
+  	pixel_buffer.red = image_buffer[2];
+	pixel_buffer.green = image_buffer[1];
+	pixel_buffer.blue = image_buffer[0];
+	
+	// sets Pixel at spot in memory
+	// TODO - see if index math better then buffer count
+	*(IMAGE_DATA + i + (((width*j) + k) * image_count) ) = pixel_buffer;
+	
+      } //for cols
+    } // for rows
+  } // iterator end
+
+  return 0;
+}
+
+
 /* 
  * Pass array image paths in argv[1] - argv[n]
  * Opens first one to get size of file
@@ -132,7 +172,8 @@ int main(int argc, char **argv) {
 
   debug("byte size: ", (sizeof(Pixel) * image_width * image_height * image_count));
 
-  bufferByImage(IMAGE_FILES, IMAGE_DATA, image_count);
+  //bufferByImage(IMAGE_FILES, IMAGE_DATA, image_count);
+  bufferByCoord(IMAGE_FILES, IMAGE_DATA, image_count, image_height, image_width);
   
   output_file = "test_output.jpg";
 

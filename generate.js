@@ -21,6 +21,7 @@ var image_buffer = new Array(128);
 var current_color = 0x000000FF; // black full alpha
 var color_stride =  0x02010000; // 0x000000 - 0xFF0F00
 var image_count = 0;
+var print_out = "";
 
 var arr = Array.apply(null, Array(128)); // a sloppy way to use forEach()
 
@@ -46,6 +47,7 @@ arr.forEach(function(element, index) {
 		if (err) {
 		    console.error(err);
 		}
+		print_out += (image_buffer[index].originialPath + " ");
 		image_count++; //hoping node is thread safe
 		if (image_count >= 127) end_generate(); 
 	    });
@@ -55,6 +57,6 @@ arr.forEach(function(element, index) {
 
 
 function end_generate() {
-    console.log("DONE");
+    console.log(print_out);
     process.exit(0);
 }

@@ -71,7 +71,7 @@ int bufferByImage(vector<cv::Mat>& IMAGE_FILES, Pixel* IMAGE_DATA, int image_cou
  * image_1 = A; image_2 = B; both 16x8 deminsions
  * [ A_x1_y1, B_x1_y1, A_x2_y1, ... , A_x16_y16, B_x16_y16 ]
  */
-int bufferByCoord(vector<cv::Mat>& IMAGE_FILES, Pixel* IMAGE_DATA, int image_count, int height, int width) {
+int bufferByCoord(vector<cv::Mat>& IMAGE_FILES, Pixel* IMAGE_DATA, int image_count, int width) {
   
   int i,j,k; // loops
   Pixel pixel_buffer; // Pixel is a 3-byte struct for 8-bit RGB value
@@ -173,7 +173,7 @@ int main(int argc, char **argv) {
   debug("byte size: ", (sizeof(Pixel) * image_width * image_height * image_count));
 
   //bufferByImage(IMAGE_FILES, IMAGE_DATA, image_count);
-  bufferByCoord(IMAGE_FILES, IMAGE_DATA, image_count, image_height, image_width);
+  bufferByCoord(IMAGE_FILES, IMAGE_DATA, image_count, image_width);
   
   output_file = "test_output.jpg";
 
